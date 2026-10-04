@@ -3,11 +3,13 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { NPC } from "@/game/aksum";
 
 const WORLD_HALF_WIDTH = 40;
 const Z_MIN = -3; // furthest into the background
 const Z_MAX = 3; // closest to the camera
 const BG_POSITION_Y = 60; // % : raise/lower the painted horizon (try 40-75)
+const TALK_DISTANCE = 2.4;
 
 function useKeys() {
   const keys = useRef<Record<string, boolean>>({});
@@ -30,9 +32,23 @@ function useKeys() {
   return keys;
 }
 
-function Player({ onMove }: { onMove: (x: number) => void }) {
+function Player({
+  onMove,
+  frozen,
+  onNearChange,
+}: {
+  onMove: (x: number) => void;
+  frozen: boolean;
+  onNearChange: (near: boolean) => void;
+}) {
   const ref = useRef<THREE.Group>(null);
   const keys = useKeys();
+  const frozenRef = useRef(frozen);
+  const nearRef = useRef(false);
+
+  useEffect(() => {
+    frozenRef.current = frozen;
+  }, [frozen]);
 
   useFrame((state, dt) => {
     const camera = state.camera;
@@ -41,10 +57,12 @@ function Player({ onMove }: { onMove: (x: number) => void }) {
     const k = keys.current;
     const speed = 4;
 
-    if (k.ArrowRight || k.KeyD) p.position.x += speed * dt;
-    if (k.ArrowLeft || k.KeyA) p.position.x -= speed * dt;
-    if (k.ArrowUp || k.KeyW) p.position.z -= speed * 0.7 * dt;
-    if (k.ArrowDown || k.KeyS) p.position.z += speed * 0.7 * dt;
+    if (!frozenRef.current) {
+      if (k.ArrowRight || k.KeyD) p.position.x += speed * dt;
+      if (k.ArrowLeft || k.KeyA) p.position.x -= speed * dt;
+      if (k.ArrowUp || k.KeyW) p.position.z -= speed * 0.7 * dt;
+      if (k.ArrowDown || k.KeyS) p.position.z += speed * 0.7 * dt;
+    }
 
     p.position.x = THREE.MathUtils.clamp(p.position.x, -WORLD_HALF_WIDTH, WORLD_HALF_WIDTH);
     p.position.z = THREE.MathUtils.clamp(p.position.z, Z_MIN, Z_MAX);
@@ -57,11 +75,19 @@ function Player({ onMove }: { onMove: (x: number) => void }) {
     camera.lookAt(camera.position.x, 1.8, 0);
 
     onMove(camera.position.x);
+
+    // Is the player close enough to talk to the NPC? (report only on change)
+    const near =
+      Math.hypot(p.position.x - NPC.x, p.position.z - NPC.z) < TALK_DISTANCE;
+    if (near !== nearRef.current) {
+      nearRef.current = near;
+      onNearChange(near);
+    }
   });
 
   // Placeholder body (replaced by the real scribe's apprentice later)
   return (
-    <group ref={ref} position={[0, 0, 0]}>
+    <group ref={ref} position={[-3, 0, 0]}>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
         <circleGeometry args={[0.5, 20]} />
         <meshBasicMaterial color="black" transparent opacity={0.35} />
@@ -73,6 +99,40 @@ function Player({ onMove }: { onMove: (x: number) => void }) {
       <mesh position={[0, 1.7, 0]}>
         <sphereGeometry args={[0.24, 16, 16]} />
         <meshStandardMaterial color="#6b4423" />
+      </mesh>
+    </group>
+  );
+}
+
+// Zeway, the stone carver (fictional), with a floating discovery star
+function Npc() {
+  const star = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    const s = star.current;
+    if (!s) return;
+    const t = state.clock.elapsedTime;
+    s.rotation.y = t;
+    s.position.y = 2.7 + Math.sin(t * 2) * 0.08;
+  });
+
+  return (
+    <group position={[NPC.x, 0, NPC.z]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <circleGeometry args={[0.5, 20]} />
+        <meshBasicMaterial color="black" transparent opacity={0.35} />
+      </mesh>
+      <mesh position={[0, 0.8, 0]}>
+        <cylinderGeometry args={[0.3, 0.38, 1.4, 12]} />
+        <meshStandardMaterial color="#8a3b2a" />
+      </mesh>
+      <mesh position={[0, 1.75, 0]}>
+        <sphereGeometry args={[0.25, 16, 16]} />
+        <meshStandardMaterial color="#5a3a22" />
+      </mesh>
+      <mesh ref={star} position={[0, 2.7, 0]}>
+        <octahedronGeometry args={[0.16]} />
+        <meshBasicMaterial color="#f2c94c" />
       </mesh>
     </group>
   );
@@ -117,7 +177,13 @@ function Ground() {
   );
 }
 
-export default function AksumScene() {
+export default function AksumScene({
+  frozen = false,
+  onNearChange,
+}: {
+  frozen?: boolean;
+  onNearChange: (near: boolean) => void;
+}) {
   const bgRef = useRef<HTMLDivElement>(null);
 
   // Painted backdrop drifts slower than the camera (parallax depth)
@@ -158,7 +224,8 @@ export default function AksumScene() {
         <Stele x={13} z={-5.5} height={6} />
         <Stele x={21} z={-5} height={4.5} />
 
-        <Player onMove={handleMove} />
+        <Npc />
+        <Player onMove={handleMove} frozen={frozen} onNearChange={onNearChange} />
       </Canvas>
 
       {/* cinematic edge darkening */}
