@@ -1,24 +1,30 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import { VoxideClient, VoxideWidget } from "@voxide/react";
 
-const ai = new VoxideClient({
-  publicKey: process.env.NEXT_PUBLIC_VOXIDE_PUBLIC_KEY ?? "",
-});
-
-ai.bindState(() => ({
-  app: "UTOPIA",
-  currentRoute: window.location.pathname,
-}));
-
-// false on the server, true in the browser: avoids the hydration mismatch
+// false on the server, true in the browser
 const subscribe = () => () => {};
 const useIsClient = () =>
   useSyncExternalStore(subscribe, () => true, () => false);
 
+function AssistantInner() {
+  // Created once, only in the browser (never on the server)
+  const ai = useMemo(() => {
+    const client = new VoxideClient({
+      publicKey: process.env.NEXT_PUBLIC_VOXIDE_PUBLIC_KEY ?? "",
+    });
+    client.bindState(() => ({
+      app: "UTOPIA",
+      currentRoute: window.location.pathname,
+    }));
+    return client;
+  }, []);
+
+  return <VoxideWidget client={ai} />;
+}
+
 export function Assistant() {
   const isClient = useIsClient();
-  if (!isClient) return null;
-  return <VoxideWidget client={ai} />;
+  return isClient ? <AssistantInner /> : null;
 }

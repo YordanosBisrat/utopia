@@ -1,26 +1,183 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --radius: 0.5rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 
-@theme inline {
+  --background: oklch(0.17 0.022 60);
+  --foreground: oklch(0.94 0.02 85);
+  --card: oklch(0.22 0.025 62);
+  --primary: oklch(0.78 0.14 78);
+  --primary-foreground: oklch(0.18 0.03 60);
+  --secondary: oklch(0.3 0.03 65);
+  --muted: oklch(0.27 0.022 65);
+  --muted-foreground: oklch(0.73 0.03 80);
+  --accent: oklch(0.55 0.11 45);
+  --destructive: oklch(0.52 0.16 28);
+  --border: oklch(0.42 0.05 72 / 45%);
+  --ring: oklch(0.78 0.14 78);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+
+  --ember: oklch(0.72 0.16 55);
+  --gold: oklch(0.82 0.14 82);
+  --sand: oklch(0.72 0.06 78);
+  --parchment: oklch(0.92 0.045 85);
+  --highland: oklch(0.42 0.07 245);
+  --moss: oklch(0.45 0.07 145);
+  --clay: oklch(0.48 0.12 38);
+  --ink: oklch(0.2 0.03 60);
+
+  --color-ember: var(--ember);
+  --color-gold: var(--gold);
+  --color-sand: var(--sand);
+  --color-parchment: var(--parchment);
+  --color-highland: var(--highland);
+  --color-moss: var(--moss);
+  --color-clay: var(--clay);
+  --color-ink: var(--ink);
+
+  --font-display: var(--font-cinzel), Georgia, serif;
+  --font-sans: var(--font-outfit), system-ui, sans-serif;
+  --font-geez: var(--font-noto-ethiopic), serif;
+
+  --gradient-portal: radial-gradient(
+    circle at center,
+    color-mix(in oklab, var(--gold) 85%, transparent),
+    color-mix(in oklab, var(--ember) 45%, transparent) 45%,
+    transparent 72%
+  );
+  --gradient-vignette: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    color-mix(in oklab, var(--ink) 80%, transparent) 100%
+  );
+  --gradient-scrim: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--ink) 92%, transparent),
+    color-mix(in oklab, var(--ink) 35%, transparent) 55%,
+    transparent
+  );
+  --shadow-relic: 0 0 60px color-mix(in oklab, var(--gold) 35%, transparent);
+  --shadow-panel: 0 24px 60px -18px oklch(0 0 0 / 65%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-outfit), system-ui, sans-serif;
+    overflow: hidden;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display), Georgia, serif;
+    letter-spacing: 0.06em;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.hud-panel {
+  background: color-mix(in oklab, var(--ink) 72%, transparent);
+  backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in oklab, var(--gold) 28%, transparent);
+  box-shadow: var(--shadow-panel);
+}
+
+.relic-frame {
+  position: relative;
+  border: 1px solid color-mix(in oklab, var(--gold) 40%, transparent);
+  background: color-mix(in oklab, var(--ink) 78%, transparent);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid color-mix(in oklab, var(--gold) 16%, transparent);
+    pointer-events: none;
+  }
+}
+
+.parchment-surface {
+  background-color: var(--parchment);
+  color: var(--ink);
+  box-shadow: var(--shadow-panel);
+}
+
+.glow-text {
+  text-shadow:
+    0 0 24px color-mix(in oklab, var(--gold) 45%, transparent),
+    0 4px 18px oklch(0 0 0 / 70%);
+}
+
+.vignette {
+  background: var(--gradient-vignette);
+}
+
+.scrim {
+  background: var(--gradient-scrim);
+}
+
+.portal-glow {
+  background: var(--gradient-portal);
+}
+
+@keyframes drift-slow {
+  0% { transform: translate3d(0, 0, 0) scale(1.08); }
+  50% { transform: translate3d(-2.2%, -1.2%, 0) scale(1.14); }
+  100% { transform: translate3d(0, 0, 0) scale(1.08); }
+}
+
+@keyframes cloud-pan {
+  from { transform: translateX(-10%); }
+  to { transform: translateX(110%); }
+}
+
+@keyframes ember-rise {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 0.9; }
+  100% { transform: translateY(-110vh) translateX(var(--sway, 20px)); opacity: 0; }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.85); opacity: 0.85; }
+  100% { transform: scale(1.75); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+.animate-kenburns {
+  animation: drift-slow 38s ease-in-out infinite;
+}
+
+.animate-ember {
+  animation: ember-rise linear infinite;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 3.2s ease-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3.4s ease-in-out infinite;
 }
