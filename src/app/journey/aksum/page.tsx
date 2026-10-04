@@ -14,8 +14,10 @@ export default function AksumPage() {
         <div className="font-semibold">Time Journeys · Episode 01: Aksum</div>
         <div className="text-white/60">Scribe&apos;s Apprentice</div>
       </div>
-      <div className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 text-xs text-white/70">
-        A / D or ← → to walk · W / S or ↑ ↓ to step inward / outward
+      <div className="pointer-events-none absolute right-4 top-4 text-right text-xs text-white/70">
+        A / D or ← → to walk
+        <br />
+        W / S or ↑ ↓ to step inward / outward
       </div>
     </main>
   );
