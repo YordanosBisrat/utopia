@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import dynamic from "next/dynamic";
 import {
   useCallback,
@@ -209,6 +210,12 @@ export function AksumGame() {
           <br />
           W / S or ↑ ↓ to step inward / outward
         </div>
+        <Link
+          href="/portal"
+          className="hud-panel px-4 py-2 text-xs uppercase tracking-[0.3em] text-parchment transition-colors hover:text-gold"
+        >
+          ← Portal
+        </Link>
         <button
           onClick={() => !busy && setMezgebOpen(true)}
           className="hud-panel px-4 py-2 text-xs uppercase tracking-[0.3em] text-parchment transition-colors hover:text-gold"
