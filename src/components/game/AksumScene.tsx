@@ -3,13 +3,12 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { NPC } from "@/game/aksum";
+import { NPC, STELE_SPOT, TALK_DISTANCE, type Target } from "@/game/aksum";
 
 const WORLD_HALF_WIDTH = 40;
 const Z_MIN = -3; // furthest into the background
 const Z_MAX = 3; // closest to the camera
 const BG_POSITION_Y = 60; // % : raise/lower the painted horizon (try 40-75)
-const TALK_DISTANCE = 2.4;
 
 function useKeys() {
   const keys = useRef<Record<string, boolean>>({});
@@ -39,12 +38,12 @@ function Player({
 }: {
   onMove: (x: number) => void;
   frozen: boolean;
-  onNearChange: (near: boolean) => void;
+  onNearChange: (t: Target) => void;
 }) {
   const ref = useRef<THREE.Group>(null);
   const keys = useKeys();
   const frozenRef = useRef(frozen);
-  const nearRef = useRef(false);
+  const nearRef = useRef<Target>(null);
 
   useEffect(() => {
     frozenRef.current = frozen;
@@ -76,12 +75,14 @@ function Player({
 
     onMove(camera.position.x);
 
-    // Is the player close enough to talk to the NPC? (report only on change)
-    const near =
-      Math.hypot(p.position.x - NPC.x, p.position.z - NPC.z) < TALK_DISTANCE;
-    if (near !== nearRef.current) {
-      nearRef.current = near;
-      onNearChange(near);
+    // What can the player interact with right now? (report only on change)
+    const dNpc = Math.hypot(p.position.x - NPC.x, p.position.z - NPC.z);
+    const dStele = Math.hypot(p.position.x - STELE_SPOT.x, p.position.z - STELE_SPOT.z);
+    const next: Target =
+      dNpc < TALK_DISTANCE ? "npc" : dStele < STELE_SPOT.range ? "stele" : null;
+    if (next !== nearRef.current) {
+      nearRef.current = next;
+      onNearChange(next);
     }
   });
 
@@ -104,41 +105,78 @@ function Player({
   );
 }
 
-// Zeway, the stone carver (fictional), with a floating discovery star
-function Npc() {
-  const star = useRef<THREE.Mesh>(null);
+// The gold discovery star: marks things worth your attention
+function Star({
+  x,
+  y,
+  z,
+  size = 0.16,
+}: {
+  x: number;
+  y: number;
+  z: number;
+  size?: number;
+}) {
+  const ref = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
-    const s = star.current;
+    const s = ref.current;
     if (!s) return;
     const t = state.clock.elapsedTime;
     s.rotation.y = t;
-    s.position.y = 2.7 + Math.sin(t * 2) * 0.08;
+    s.position.y = y + Math.sin(t * 2) * 0.08;
   });
 
   return (
-    <group position={[NPC.x, 0, NPC.z]}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <circleGeometry args={[0.5, 20]} />
-        <meshBasicMaterial color="black" transparent opacity={0.35} />
-      </mesh>
-      <mesh position={[0, 0.8, 0]}>
-        <cylinderGeometry args={[0.3, 0.38, 1.4, 12]} />
-        <meshStandardMaterial color="#8a3b2a" />
-      </mesh>
-      <mesh position={[0, 1.75, 0]}>
-        <sphereGeometry args={[0.25, 16, 16]} />
-        <meshStandardMaterial color="#5a3a22" />
-      </mesh>
-      <mesh ref={star} position={[0, 2.7, 0]}>
-        <octahedronGeometry args={[0.16]} />
-        <meshBasicMaterial color="#f2c94c" />
-      </mesh>
+    <mesh ref={ref} position={[x, y, z]}>
+      <octahedronGeometry args={[size]} />
+      <meshBasicMaterial color="#f2c94c" />
+    </mesh>
+  );
+}
+
+// Zeway, the stone carver (fictional)
+function Npc() {
+  return (
+    <group>
+      <group position={[NPC.x, 0, NPC.z]}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+          <circleGeometry args={[0.5, 20]} />
+          <meshBasicMaterial color="black" transparent opacity={0.35} />
+        </mesh>
+        <mesh position={[0, 0.8, 0]}>
+          <cylinderGeometry args={[0.3, 0.38, 1.4, 12]} />
+          <meshStandardMaterial color="#8a3b2a" />
+        </mesh>
+        <mesh position={[0, 1.75, 0]}>
+          <sphereGeometry args={[0.25, 16, 16]} />
+          <meshStandardMaterial color="#5a3a22" />
+        </mesh>
+      </group>
+      <Star x={NPC.x} y={2.7} z={NPC.z} />
     </group>
   );
 }
 
-function Stele({ x, z = -5, height }: { x: number; z?: number; height: number }) {
+function Stele({
+  x,
+  z = -5,
+  height,
+  carved = false,
+}: {
+  x: number;
+  z?: number;
+  height: number;
+  carved?: boolean;
+}) {
+  // distance from the stele's axis to its front face at a height above its base
+  const faceDist = (yRel: number) => (0.4 - 0.14 * (yRel / height)) / Math.SQRT2;
+
+  const rows: number[] = [];
+  if (carved) {
+    for (let y = 1.2; y < height - 0.7; y += 0.85) rows.push(y);
+  }
+
   return (
     <group position={[x, 0, z]}>
       <mesh position={[0, 0.12, 0]}>
@@ -149,6 +187,28 @@ function Stele({ x, z = -5, height }: { x: number; z?: number; height: number })
         <cylinderGeometry args={[0.26, 0.4, height, 4]} />
         <meshStandardMaterial color="#8c7a62" />
       </mesh>
+
+      {carved && (
+        <>
+          {/* false door at the foot */}
+          <mesh position={[0, 0.25 + 0.4, faceDist(0.4) + 0.01]}>
+            <boxGeometry args={[0.16, 0.5, 0.02]} />
+            <meshBasicMaterial color="#2a2118" />
+          </mesh>
+          {/* rows of false windows */}
+          {rows.map((y) =>
+            [-0.09, 0.09].map((dx) => (
+              <mesh
+                key={`${y}-${dx}`}
+                position={[dx, 0.25 + y, faceDist(y) + 0.01]}
+              >
+                <boxGeometry args={[0.09, 0.24, 0.02]} />
+                <meshBasicMaterial color="#2a2118" />
+              </mesh>
+            )),
+          )}
+        </>
+      )}
     </group>
   );
 }
@@ -180,9 +240,11 @@ function Ground() {
 export default function AksumScene({
   frozen = false,
   onNearChange,
+  highlightStele = false,
 }: {
   frozen?: boolean;
-  onNearChange: (near: boolean) => void;
+  onNearChange: (t: Target) => void;
+  highlightStele?: boolean;
 }) {
   const bgRef = useRef<HTMLDivElement>(null);
 
@@ -221,8 +283,10 @@ export default function AksumScene({
         <Stele x={-12} z={-5} height={4.5} />
         <Stele x={-4} z={-5.5} height={5.5} />
         <Stele x={6} z={-5} height={4} />
-        <Stele x={13} z={-5.5} height={6} />
+        <Stele x={STELE_SPOT.x} z={STELE_SPOT.z} height={6} carved />
         <Stele x={21} z={-5} height={4.5} />
+
+        {highlightStele && <Star x={STELE_SPOT.x} y={7.4} z={STELE_SPOT.z} size={0.3} />}
 
         <Npc />
         <Player onMove={handleMove} frozen={frozen} onNearChange={onNearChange} />
