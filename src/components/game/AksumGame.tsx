@@ -23,8 +23,10 @@ import {
   subscribeUnlocked,
   unlockEntry,
 } from "@/game/mezgeb";
+import { setGameActions, setGameSnapshot } from "@/game/bridge";
 import { DialogueBox } from "./DialogueBox";
 import { DiscoveryOverlay, ExaminePanel, MezgebPanel } from "./Overlays";
+import { ScribeRecord } from "./ScribeRecord";
 
 const AksumScene = dynamic(() => import("./AksumScene"), { ssr: false });
 
@@ -32,6 +34,7 @@ export function AksumGame() {
   const [target, setTarget] = useState<Target>(null);
   const [talking, setTalking] = useState(false);
   const [examining, setExamining] = useState(false);
+  const [recording, setRecording] = useState(false);
   const [mezgebOpen, setMezgebOpen] = useState(false);
   const [discovery, setDiscovery] = useState<string | null>(null);
   const [pending, setPending] = useState<string | null>(null);
@@ -45,11 +48,11 @@ export function AksumGame() {
   );
   const unlocked = useMemo(() => JSON.parse(rawUnlocked) as string[], [rawUnlocked]);
 
-  const busy = talking || examining || mezgebOpen || discovery !== null;
+  const busy = talking || examining || recording || mezgebOpen || discovery !== null;
   const node = DIALOGUE.find((d) => d.id === nodeId) ?? DIALOGUE[0];
 
-  // The stele can only be examined once Zeway has sent you there
-  const activeTarget: Target = target === "stele" && stage < 1 ? null : target;
+  // The stele can only be examined while that is the current objective
+  const activeTarget: Target = target === "stele" && stage !== 1 ? null : target;
 
   const closeDialogue = useCallback(
     (pend: string | null = pending) => {
@@ -62,8 +65,14 @@ export function AksumGame() {
     [pending],
   );
 
+  // After reading the stele, the Scribe's Record mini-game opens
   const finishExamine = useCallback(() => {
     setExamining(false);
+    setRecording(true);
+  }, []);
+
+  const completeRecord = useCallback(() => {
+    setRecording(false);
     setStage((s) => Math.max(s, 2));
   }, []);
 
@@ -81,17 +90,19 @@ export function AksumGame() {
     const onKey = (e: KeyboardEvent) => {
       if (e.code === "KeyE") interact();
       else if (e.code === "KeyM") {
-        if (!talking && !examining && discovery === null) setMezgebOpen((o) => !o);
+        if (!talking && !examining && !recording && discovery === null)
+          setMezgebOpen((o) => !o);
       } else if (e.code === "Escape") {
         if (discovery !== null) setDiscovery(null);
         else if (mezgebOpen) setMezgebOpen(false);
+        else if (recording) setRecording(false);
         else if (examining) finishExamine();
         else if (talking) closeDialogue();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [interact, talking, examining, mezgebOpen, discovery, finishExamine, closeDialogue]);
+  }, [interact, talking, examining, recording, mezgebOpen, discovery, finishExamine, closeDialogue]);
 
   const choose = (c: Choice) => {
     if (c.progress !== undefined) {
@@ -107,6 +118,64 @@ export function AksumGame() {
     if (c.next) setNodeId(c.next);
     else closeDialogue(pend);
   };
+
+  // --- Share live game state and actions with the Voxide voice assistant ---
+  useEffect(() => {
+    setGameSnapshot({
+      episode: "Episode 01: Aksum",
+      role: "Scribe's Apprentice",
+      objective: OBJECTIVES[stage],
+      nearby:
+        activeTarget === "npc"
+          ? "Zeway, a fictional stone carver"
+          : activeTarget === "stele"
+            ? "the tallest stele"
+            : "nothing",
+      screen: discovery
+        ? "discovery"
+        : mezgebOpen
+          ? "archive"
+          : talking
+            ? "dialogue"
+            : examining
+              ? "examining"
+              : recording
+                ? "record mini-game"
+                : "exploring",
+      unlockedEntries: unlocked,
+    });
+  }, [stage, activeTarget, discovery, mezgebOpen, talking, examining, recording, unlocked]);
+
+  useEffect(() => {
+    setGameActions({
+      openMezgeb: () => {
+        if (!talking && !examining && !recording && discovery === null) setMezgebOpen(true);
+      },
+      closeOverlay: () => {
+        setMezgebOpen(false);
+        setDiscovery(null);
+      },
+      interact: () => {
+        if (busy) return "Something is already open on screen.";
+        if (activeTarget === "npc") {
+          interact();
+          return `Started talking with ${NPC.name}.`;
+        }
+        if (activeTarget === "stele") {
+          interact();
+          return "Examining the tallest stele.";
+        }
+        return "Nothing is nearby. Walk closer to Zeway or to the tallest stele.";
+      },
+    });
+  }, [busy, activeTarget, interact, talking, examining, recording, discovery]);
+
+  useEffect(() => {
+    return () => {
+      setGameSnapshot({});
+      setGameActions({});
+    };
+  }, []);
 
   const prompt =
     activeTarget === "npc"
@@ -176,6 +245,13 @@ export function AksumGame() {
           />
         )}
         {examining && <ExaminePanel key="examine" onDone={finishExamine} />}
+        {recording && (
+          <ScribeRecord
+            key="record"
+            onComplete={completeRecord}
+            onClose={() => setRecording(false)}
+          />
+        )}
         {discovery && (
           <DiscoveryOverlay
             key="discovery"

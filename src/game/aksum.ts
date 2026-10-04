@@ -23,7 +23,7 @@ export const STELE_SPOT = { x: 13, z: -5.5, range: 3.8 };
 
 export const OBJECTIVES = [
   "Speak with Zeway, the stone carver",
-  "Examine the tallest stele",
+  "Examine the tallest stele and record what you see",
   "Answer Zeway's question",
   "Journey complete: open your መዝገብ",
 ];
