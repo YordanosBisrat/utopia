@@ -107,77 +107,101 @@ export function MezgebPanel({
 
   return (
     <motion.div
-      className="absolute inset-0 z-40 flex items-center justify-center bg-ink/85 p-4 backdrop-blur-sm"
+      className="absolute inset-0 z-40 flex items-center justify-center bg-ink/80 p-3 backdrop-blur-sm"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       role="dialog"
       aria-label="መዝገብ knowledge archive"
     >
-      <div className="relic-frame max-h-[80vh] w-full max-w-2xl overflow-y-auto p-6 sm:p-8">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="font-geez text-3xl text-gold">መዝገብ</h2>
-            <p className="text-[11px] uppercase tracking-[0.35em] text-sand/70">
-              Knowledge Archive · {entries.length} / {ENTRIES.length} discovered
-            </p>
+      <motion.div
+        initial={{ opacity: 0, y: 40, rotateX: 8 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0 }}
+        exit={{ opacity: 0, y: 24 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="parchment-surface relative aspect-square w-[min(94vw,88vh,46rem)]"
+        style={{
+          backgroundImage: "url(/art/mezgeb.jpg)",
+          backgroundSize: "100% 100%",
+        }}
+      >
+        {/* Content stays inside the decorative border */}
+        <div className="absolute inset-[12%] flex flex-col">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="font-geez text-4xl leading-none text-ink">መዝገብ</h2>
+              <p className="mt-2 text-[10px] uppercase tracking-[0.3em] text-clay">
+                Knowledge Archive · {entries.length} / {ENTRIES.length} discovered
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="h-8 w-8 shrink-0 border border-ink/25 text-ink/70 transition-colors hover:bg-ink/10"
+              aria-label="Close መዝገብ"
+            >
+              ✕
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="text-[10px] uppercase tracking-[0.3em] text-sand/60 hover:text-gold"
-          >
-            Esc · Close
-          </button>
+
+          <div className="mt-5 flex-1 overflow-y-auto pr-2">
+            {entries.length === 0 ? (
+              <p className="text-sm text-ink/70">
+                Nothing discovered yet. Explore Aksum to unlock your first entry.
+              </p>
+            ) : (
+              <div className="space-y-6">
+                {entries.map((e, i) => (
+                  <motion.article
+                    key={e.id}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15 + i * 0.08 }}
+                    className="border-l-2 border-clay/50 pl-4"
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-clay">
+                      <span className="font-geez normal-case">{e.category.am}</span> ·{" "}
+                      {e.category.en}
+                    </p>
+                    <h3 className="mt-1 text-xl uppercase text-ink">{e.title.en}</h3>
+                    <p className="font-geez text-base text-clay">{e.title.am}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-ink/80">
+                      {e.summary}
+                    </p>
+                    <p className="mt-3 text-[10px] uppercase tracking-[0.25em] text-ink/50">
+                      Sources
+                    </p>
+                    <ul className="mt-1 text-xs text-ink/70">
+                      {e.sources.map((s) => (
+                        <li key={s.name}>
+                          {s.url ? (
+                            <a
+                              href={s.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="underline decoration-clay/50 hover:text-clay"
+                            >
+                              {s.name}
+                            </a>
+                          ) : (
+                            s.name
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.article>
+                ))}
+              </div>
+            )}
+
+            <button
+              onClick={onReset}
+              className="mt-8 text-[10px] uppercase tracking-[0.25em] text-ink/35 hover:text-ink/70"
+            >
+              Reset demo progress
+            </button>
+          </div>
         </div>
-
-        {entries.length === 0 ? (
-          <p className="mt-8 text-sm text-sand">
-            Nothing discovered yet. Explore Aksum to unlock your first entry.
-          </p>
-        ) : (
-          <div className="mt-6 space-y-5">
-            {entries.map((e) => (
-              <article key={e.id} className="hud-panel p-5">
-                <p className="text-[10px] uppercase tracking-[0.3em] text-gold">
-                  <span className="font-geez normal-case">{e.category.am}</span> ·{" "}
-                  {e.category.en}
-                </p>
-                <h3 className="mt-2 text-xl uppercase text-parchment">{e.title.en}</h3>
-                <p className="font-geez text-base text-gold/80">{e.title.am}</p>
-                <p className="mt-3 text-sm leading-relaxed text-sand">{e.summary}</p>
-                <p className="mt-4 text-[10px] uppercase tracking-[0.25em] text-sand/50">
-                  Sources
-                </p>
-                <ul className="mt-1 text-xs text-sand">
-                  {e.sources.map((s) => (
-                    <li key={s.name}>
-                      {s.url ? (
-                        <a
-                          href={s.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="underline decoration-gold/40 hover:text-gold"
-                        >
-                          {s.name}
-                        </a>
-                      ) : (
-                        s.name
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-        )}
-
-        <button
-          onClick={onReset}
-          className="mt-8 text-[10px] uppercase tracking-[0.25em] text-sand/40 hover:text-sand"
-        >
-          Reset demo progress
-        </button>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
