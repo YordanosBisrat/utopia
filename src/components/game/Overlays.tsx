@@ -119,7 +119,7 @@ export function MezgebPanel({
         animate={{ opacity: 1, y: 0, rotateX: 0 }}
         exit={{ opacity: 0, y: 24 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="parchment-surface relative aspect-square w-[min(94vw,88vh,46rem)]"
+        className="parchment-surface relative aspect-square w-[min(94vw,80vh,46rem)]"
         style={{
           backgroundImage: "url(/art/mezgeb.jpg)",
           backgroundSize: "100% 100%",

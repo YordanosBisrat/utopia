@@ -9,10 +9,10 @@ export type Fact = {
 export const FACTS: Fact[] = [
   {
     id: "aksum-overview",
-    keywords: ["aksum", "axum", "kingdom", "important", "powerful", "capital", "history"],
-    text: "Aksum was a powerful kingdom in the Horn of Africa, based around the city of Aksum in northern Ethiopia. It flourished in the first millennium CE.",
+    keywords: ["aksum", "axum", "kingdom", "important", "powerful", "capital", "history", "ruins"],
+    text: "Aksum was a powerful ancient kingdom in northern Ethiopia. UNESCO describes the ruins of its city as dating from between the 1st and the 13th century AD, with monolithic obelisks, giant stelae and royal tombs.",
     source: "UNESCO World Heritage: Aksum (whc.unesco.org/en/list/15)",
-    verified: false,
+    verified: true,
   },
   {
     id: "aksum-trade",
@@ -29,10 +29,17 @@ export const FACTS: Fact[] = [
     verified: false,
   },
   {
-    id: "stelae",
-    keywords: ["stele", "stelae", "stone", "obelisk", "tomb", "burial", "carved", "door", "window", "tall"],
-    text: "Stelae are tall carved stones. Many in Aksum are carved to look like tall buildings, with false doors and windows that do not open, and many stand near burial places.",
+    id: "stelae-unesco",
+    keywords: ["stele", "stelae", "stone", "obelisk", "tomb", "tombs", "royal", "century", "old", "tall"],
+    text: "UNESCO lists Aksum's monolithic obelisks, giant stelae and royal tombs. Several of the stelae in the town date to the 3rd and 4th centuries AD.",
     source: "UNESCO World Heritage: Aksum (whc.unesco.org/en/list/15)",
+    verified: true,
+  },
+  {
+    id: "stelae-carving",
+    keywords: ["carved", "door", "doors", "window", "windows", "building", "buildings", "false", "burial", "grave"],
+    text: "Many Aksumite stelae are carved to look like tall, many-storeyed buildings, with false doors and windows that do not open, and they stand in a landscape of tombs.",
+    source: "VERIFY: add a second source (UNESCO text, or an academic source on Aksumite stelae)",
     verified: false,
   },
   {
