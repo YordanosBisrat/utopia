@@ -8,6 +8,7 @@ import { useUnlocked } from "@/game/useUnlocked";
 import { SceneBackdrop } from "./Atmosphere";
 import { ExplorePanel } from "./ExplorePanel";
 import { MezgebPanel } from "./Overlays";
+import { Logo } from "@/components/Logo";
 
 export function TitleScreen() {
   const unlocked = useUnlocked();
@@ -35,6 +36,10 @@ export function TitleScreen() {
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         aria-hidden
       />
+
+      <div className="absolute left-6 top-6 z-20 sm:left-12 lg:left-20">
+        <Logo size={44} />
+      </div>
 
       <div className="relative z-10 flex h-full flex-col justify-end px-6 pb-14 sm:px-12 lg:px-20 lg:pb-20">
         <motion.p

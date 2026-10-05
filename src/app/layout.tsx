@@ -23,6 +23,13 @@ export const metadata: Metadata = {
   title: "UTOPIA | you-ጦቢያ",
   description:
     "Where Ethiopia Comes Alive. An interactive Ethiopian knowledge universe.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico?v=2", sizes: "any" },
+      { url: "/brand/icon.png?v=2", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: "/brand/apple-icon.png?v=2", sizes: "180x180" }],
+  },
 };
 
 export default function RootLayout({

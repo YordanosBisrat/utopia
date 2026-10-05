@@ -28,6 +28,7 @@ import { setGameActions, setGameSnapshot } from "@/game/bridge";
 import { DialogueBox } from "./DialogueBox";
 import { DiscoveryOverlay, ExaminePanel, MezgebPanel } from "./Overlays";
 import { ScribeRecord } from "./ScribeRecord";
+import { Logo } from "@/components/Logo";
 
 const AksumScene = dynamic(() => import("./AksumScene"), { ssr: false });
 
@@ -191,6 +192,7 @@ export function AksumGame() {
 
       {/* HUD: top-left */}
       <div className="pointer-events-none absolute left-4 top-4 space-y-3">
+        <Logo size={34} showText={false} href="/portal" />
         <div>
           <div className="font-display text-xs uppercase tracking-[0.3em] text-gold">
             Time Journeys · Episode 01

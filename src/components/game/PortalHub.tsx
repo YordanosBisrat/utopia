@@ -10,6 +10,7 @@ import { useUnlocked } from "@/game/useUnlocked";
 import { Embers } from "./Atmosphere";
 import { EraTransition } from "./EraTransition";
 import { MezgebPanel } from "./Overlays";
+import { Logo } from "@/components/Logo";
 
 export function PortalHub() {
   const router = useRouter();
@@ -58,9 +59,10 @@ export function PortalHub() {
       <div className="relative z-10 flex h-full flex-col p-5 sm:p-10">
         <div className="flex items-start justify-between gap-4">
           <div>
+            <Logo size={36} />
             <Link
               href="/"
-              className="text-[11px] uppercase tracking-[0.3em] text-sand/70 transition-colors hover:text-gold"
+              className="mt-4 block text-[11px] uppercase tracking-[0.3em] text-sand/70 transition-colors hover:text-gold"
             >
               ← Return
             </Link>
