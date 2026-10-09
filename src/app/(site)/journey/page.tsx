@@ -23,7 +23,7 @@ export default function Journey() {
 
   return (
     <>
-      <PageHeader eyebrow="Roots & routes" title="YOUR JOURNEY" am="ጉዞዎ" sub="Discover a place to light the golden path to the next one." />
+      <PageHeader eyebrow="Roots & routes" title="YOUR JOURNEY" am="ጉዞዎ" />
       <div className="mx-auto grid max-w-6xl gap-8 px-5 lg:grid-cols-[1fr_300px]">
         <div className="panel corners relative aspect-square overflow-hidden rounded-sm md:aspect-[4/3]">
           <div className="pattern-geez absolute inset-0 opacity-50" />
