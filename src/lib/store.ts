@@ -23,6 +23,9 @@ export interface PlayerState {
   mapsOpened: number;
   language: Lang;
   reduceMotion: boolean;
+  onboarded: boolean;
+  interests: string[];
+  level: "new" | "some" | "expert" | null;
 }
 
 const KEY = "utopia.player.v1";
@@ -41,6 +44,9 @@ const initial: PlayerState = {
   mapsOpened: 0,
   language: "en",
   reduceMotion: false,
+  onboarded: false,
+  interests: [],
+  level: null,
 };
 
 let state: PlayerState = initial;
@@ -166,6 +172,16 @@ export const actions = {
   },
   setReduceMotion(reduceMotion: boolean) {
     set((s) => ({ ...s, reduceMotion }));
+  },
+  completeOnboarding(o: { name: string; language: Lang; interests: string[]; level: "new" | "some" | "expert" }) {
+    set((s) => ({
+      ...s,
+      name: o.name.trim() || "Explorer",
+      language: o.language,
+      interests: o.interests,
+      level: o.level,
+      onboarded: true,
+    }));
   },
   reset() {
     set(() => initial);
