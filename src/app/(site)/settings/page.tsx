@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { actions, usePlayer } from "@/lib/store";
 import { GhostButton, GoldButton, PageHeader } from "@/components/utopia/ui";
 import { cn } from "@/lib/utils";
+import { AvatarEditor } from "@/components/utopia/AvatarEditor";
 
 
 export default function SettingsPage() {
@@ -16,6 +17,7 @@ export default function SettingsPage() {
     <>
       <PageHeader eyebrow="Your camp" title="SETTINGS" am="ቅንብሮች" />
       <div className="mx-auto max-w-2xl space-y-6 px-5">
+        <AvatarEditor />
         <section className="panel rounded-sm p-5">
           <label className="font-display text-sm tracking-widest text-gold">EXPLORER NAME</label>
           <div className="mt-3 flex gap-3">

@@ -26,6 +26,7 @@ export interface PlayerState {
   onboarded: boolean;
   interests: string[];
   level: "new" | "some" | "expert" | null;
+  avatar: string | null; // small JPEG data URL of the profile picture
 }
 
 const KEY = "utopia.player.v1";
@@ -47,6 +48,7 @@ const initial: PlayerState = {
   onboarded: false,
   interests: [],
   level: null,
+  avatar: null,
 };
 
 let state: PlayerState = initial;
@@ -166,6 +168,9 @@ export const actions = {
   },
   setName(name: string) {
     set((s) => ({ ...s, name: name || "Explorer" }));
+  },
+  setAvatar(avatar: string | null) {
+    set((s) => ({ ...s, avatar }));
   },
   setLanguage(language: Lang) {
     set((s) => ({ ...s, language }));
