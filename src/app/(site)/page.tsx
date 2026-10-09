@@ -6,8 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { categories, images, episodes } from "@/lib/data";
-import { ExplorerCategoryCard, Eyebrow, goldLinkClass, ghostLinkClass } from "@/components/utopia/ui";
-
+import { ExplorerCategoryCard, goldLinkClass, ghostLinkClass } from "@/components/utopia/ui";
 
 export default function Index() {
   const [y, setY] = useState(0);

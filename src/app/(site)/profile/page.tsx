@@ -5,7 +5,7 @@ import { achievements, episodes, explorations, journeyPath, miniGames } from "@/
 import { usePlayer, levelOf } from "@/lib/store";
 import { AchievementBadge, LevelBadge, PageHeader, XPBar } from "@/components/utopia/ui";
 import { images } from "@/lib/data";
-
+import { Avatar } from "@/components/utopia/Avatar";
 
 export default function Profile() {
   const p = usePlayer();
@@ -25,7 +25,11 @@ export default function Profile() {
       <PageHeader eyebrow="Explorer" title={p.name.toUpperCase()} am="አሳሽ" />
       <div className="mx-auto max-w-6xl px-5">
         <div className="panel corners flex flex-col items-center gap-6 rounded-sm p-6 sm:flex-row">
-          <img src={images.guideImg} alt="" className="h-24 w-24 rounded-full border-2 border-gold object-cover object-top" />
+          {p.avatar ? (
+            <Avatar name={p.name} src={p.avatar} className="h-24 w-24 border-2" />
+          ) : (
+            <img src={images.guideImg} alt="" className="h-24 w-24 rounded-full border-2 border-gold object-cover object-top" />
+          )}
           <LevelBadge xp={p.xp} />
           <XPBar xp={p.xp} className="flex-1" />
           <Link href="/settings" className="text-sm text-gold underline">Edit name</Link>
