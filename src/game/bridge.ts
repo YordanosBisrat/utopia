@@ -1,4 +1,4 @@
-// Connects the root-level voice assistant to the game screen.
+// Connects the root-level voice assistant to whatever screen is open.
 export type GameSnapshot = Record<string, string | number | boolean | string[] | null>;
 
 export type GameActions = {

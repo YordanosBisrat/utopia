@@ -58,11 +58,48 @@ export const FACTS: Fact[] = [
   },
 ];
 
+// Speech recognition often mishears names ("Axsum", "Oxsum" for "Aksum")
+const ALIASES: [RegExp, string][] = [
+  [/\b(oxsum|axsum|axum|aksoom|aksoum|oxum|exum|aksuum)\b/g, "aksum"],
+  [/\b(steli|stellae|stelas|steely|stila)\b/g, "stelae"],
+  [/\b(geeze|giz|ge ez|geez)\b/g, "geez"],
+];
+
+function distance(a: string, b: string): number {
+  const dp = Array.from({ length: a.length + 1 }, (_, i) => {
+    const row = new Array<number>(b.length + 1).fill(0);
+    row[0] = i;
+    return row;
+  });
+  for (let j = 1; j <= b.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1),
+      );
+    }
+  }
+  return dp[a.length][b.length];
+}
+
+function wordMatches(word: string, keyword: string): boolean {
+  if (word === keyword) return true;
+  if (word.length < 4 || keyword.length < 4 || keyword.includes(" ")) return false;
+  return distance(word, keyword) <= (keyword.length >= 7 ? 2 : 1);
+}
+
 export function lookup(topic: string) {
-  const t = topic.toLowerCase();
+  let t = topic.toLowerCase();
+  for (const [pattern, replacement] of ALIASES) t = t.replace(pattern, replacement);
+  const words = t.split(/[^a-z']+/).filter(Boolean);
+
   const hits = FACTS.map((f) => ({
     f,
-    score: f.keywords.filter((k) => t.includes(k)).length,
+    score: f.keywords.filter(
+      (k) => t.includes(k) || words.some((w) => wordMatches(w, k)),
+    ).length,
   }))
     .filter((x) => x.score > 0)
     .sort((a, b) => b.score - a.score)
@@ -72,6 +109,7 @@ export function lookup(topic: string) {
     return {
       found: false,
       message: "No verified information on this topic yet.",
+      suggestions: ["Aksum", "the stelae", "Ge'ez writing", "Aksumite trade"],
     };
   }
   return {
