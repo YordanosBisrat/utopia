@@ -69,7 +69,6 @@ export default function ChallengePage() {
           {/* Question */}
           <div>
             <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-gold">
-              <span className="h-px w-8 bg-gold/70" />
               {cat ? cat.en : "Ethiopia"} · {rank}
             </div>
 

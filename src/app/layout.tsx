@@ -3,6 +3,7 @@ import { Cinzel, Figtree, Noto_Serif_Ethiopic, Noto_Sans_Ethiopic } from "next/f
 import { Toaster } from "sonner";
 import "./globals.css";
 import { Assistant } from "@/components/Assistant";
+import { TapEffect } from "@/components/TapEffect";
 
 const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel", display: "swap" });
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-figtree", display: "swap" });
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         {children}
         <Assistant />
+        <TapEffect />
         <Toaster position="top-center" theme="dark" />
       </body>
     </html>

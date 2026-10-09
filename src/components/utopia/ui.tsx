@@ -22,7 +22,6 @@ export function Sigil({ glyph, className }: { glyph: string; className?: string 
 export function Eyebrow({ children }: { children: ReactNode }) {
   return (
     <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-emerald-glow">
-      <span className="h-px w-8 bg-gold" />
       {children}
     </div>
   );
