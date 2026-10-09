@@ -4,11 +4,16 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { NPC, STELE_SPOT, TALK_DISTANCE, type Target } from "@/game/aksum";
+import { Scribe, Zeway } from "./AksumCharacters";
+import { PLATFORM_H, Stele } from "./AksumStele";
 
 const WORLD_HALF_WIDTH = 40;
 const Z_MIN = -3; // furthest into the background
 const Z_MAX = 3; // closest to the camera
 const BG_POSITION_Y = 60; // % : raise/lower the painted horizon (try 40-75)
+const GREAT_STELE_HEIGHT = 6.3;
+
+type Motion = { moving: boolean; dir: number };
 
 function useKeys() {
   const keys = useRef<Record<string, boolean>>({});
@@ -41,6 +46,7 @@ function Player({
   onNearChange: (t: Target) => void;
 }) {
   const ref = useRef<THREE.Group>(null);
+  const motion = useRef<Motion>({ moving: false, dir: 0 });
   const keys = useKeys();
   const frozenRef = useRef(frozen);
   const nearRef = useRef<Target>(null);
@@ -56,12 +62,24 @@ function Player({
     const k = keys.current;
     const speed = 4;
 
+    let dx = 0;
+    let dz = 0;
     if (!frozenRef.current) {
-      if (k.ArrowRight || k.KeyD) p.position.x += speed * dt;
-      if (k.ArrowLeft || k.KeyA) p.position.x -= speed * dt;
-      if (k.ArrowUp || k.KeyW) p.position.z -= speed * 0.7 * dt;
-      if (k.ArrowDown || k.KeyS) p.position.z += speed * 0.7 * dt;
+      if (k.ArrowRight || k.KeyD) dx += 1;
+      if (k.ArrowLeft || k.KeyA) dx -= 1;
+      if (k.ArrowUp || k.KeyW) dz -= 1;
+      if (k.ArrowDown || k.KeyS) dz += 1;
+      p.position.x += dx * speed * dt;
+      p.position.z += dz * speed * 0.7 * dt;
     }
+    motion.current.moving = dx !== 0 || dz !== 0;
+    // turn toward the direction of travel; face Zeway while talking
+    motion.current.dir =
+      dx !== 0
+        ? dx
+        : frozenRef.current && nearRef.current === "npc"
+          ? Math.sign(NPC.x - p.position.x)
+          : 0;
 
     p.position.x = THREE.MathUtils.clamp(p.position.x, -WORLD_HALF_WIDTH, WORLD_HALF_WIDTH);
     p.position.z = THREE.MathUtils.clamp(p.position.z, Z_MIN, Z_MAX);
@@ -86,21 +104,9 @@ function Player({
     }
   });
 
-  // Placeholder body (replaced by the real scribe's apprentice later)
   return (
-    <group ref={ref} position={[-3, 0, 0]}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <circleGeometry args={[0.5, 20]} />
-        <meshBasicMaterial color="black" transparent opacity={0.35} />
-      </mesh>
-      <mesh position={[0, 0.8, 0]}>
-        <cylinderGeometry args={[0.28, 0.34, 1.3, 12]} />
-        <meshStandardMaterial color="#c9a227" />
-      </mesh>
-      <mesh position={[0, 1.7, 0]}>
-        <sphereGeometry args={[0.24, 16, 16]} />
-        <meshStandardMaterial color="#6b4423" />
-      </mesh>
+    <group ref={ref} name="scribe" position={[-3, 0, 0]}>
+      <Scribe motion={motion} />
     </group>
   );
 }
@@ -139,76 +145,8 @@ function Star({
 function Npc() {
   return (
     <group>
-      <group position={[NPC.x, 0, NPC.z]}>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-          <circleGeometry args={[0.5, 20]} />
-          <meshBasicMaterial color="black" transparent opacity={0.35} />
-        </mesh>
-        <mesh position={[0, 0.8, 0]}>
-          <cylinderGeometry args={[0.3, 0.38, 1.4, 12]} />
-          <meshStandardMaterial color="#8a3b2a" />
-        </mesh>
-        <mesh position={[0, 1.75, 0]}>
-          <sphereGeometry args={[0.25, 16, 16]} />
-          <meshStandardMaterial color="#5a3a22" />
-        </mesh>
-      </group>
-      <Star x={NPC.x} y={2.7} z={NPC.z} />
-    </group>
-  );
-}
-
-function Stele({
-  x,
-  z = -5,
-  height,
-  carved = false,
-}: {
-  x: number;
-  z?: number;
-  height: number;
-  carved?: boolean;
-}) {
-  // distance from the stele's axis to its front face at a height above its base
-  const faceDist = (yRel: number) => (0.4 - 0.14 * (yRel / height)) / Math.SQRT2;
-
-  const rows: number[] = [];
-  if (carved) {
-    for (let y = 1.2; y < height - 0.7; y += 0.85) rows.push(y);
-  }
-
-  return (
-    <group position={[x, 0, z]}>
-      <mesh position={[0, 0.12, 0]}>
-        <boxGeometry args={[1.3, 0.25, 1.1]} />
-        <meshStandardMaterial color="#6e6150" />
-      </mesh>
-      <mesh position={[0, height / 2 + 0.25, 0]} rotation={[0, Math.PI / 4, 0]}>
-        <cylinderGeometry args={[0.26, 0.4, height, 4]} />
-        <meshStandardMaterial color="#8c7a62" />
-      </mesh>
-
-      {carved && (
-        <>
-          {/* false door at the foot */}
-          <mesh position={[0, 0.25 + 0.4, faceDist(0.4) + 0.01]}>
-            <boxGeometry args={[0.16, 0.5, 0.02]} />
-            <meshBasicMaterial color="#2a2118" />
-          </mesh>
-          {/* rows of false windows */}
-          {rows.map((y) =>
-            [-0.09, 0.09].map((dx) => (
-              <mesh
-                key={`${y}-${dx}`}
-                position={[dx, 0.25 + y, faceDist(y) + 0.01]}
-              >
-                <boxGeometry args={[0.09, 0.24, 0.02]} />
-                <meshBasicMaterial color="#2a2118" />
-              </mesh>
-            )),
-          )}
-        </>
-      )}
+      <Zeway x={NPC.x} z={NPC.z} />
+      <Star x={NPC.x} y={3.15} z={NPC.z} />
     </group>
   );
 }
@@ -280,16 +218,42 @@ export default function AksumScene({
 
         <Ground />
 
-        <Stele x={-12} z={-5} height={4.5} />
-        <Stele x={-4} z={-5.5} height={5.5} />
-        <Stele x={6} z={-5} height={4} />
-        <Stele x={STELE_SPOT.x} z={STELE_SPOT.z} height={6} carved />
-        <Stele x={21} z={-5} height={4.5} />
+        {/* plain stelae: slender slabs with rounded tops */}
+        <Stele x={-15} z={-5} height={4.2} />
+        <Stele x={6} z={-5} height={3.6} tilt={0.025} tint="#cfc6b3" />
+        <Stele x={23} z={-5} height={4.4} tint="#d4cab6" />
 
-        {highlightStele && <Star x={STELE_SPOT.x} y={7.4} z={STELE_SPOT.z} size={0.3} />}
+        {/* a carved, multi-storey stele and a broken length lying where it fell */}
+        <Stele x={-4} z={-5.6} height={5.2} carved storeys={8} tint="#d2c8b4" />
+        <Stele x={-9.5} z={-3.7} height={3.1} carved storeys={5} fallen />
+
+        {/* the great stele: carved storeys, false door, stepped platform */}
+        <Stele x={STELE_SPOT.x - 2.9} z={-5.9} height={2.6} tilt={-0.02} />
+        <Stele x={STELE_SPOT.x + 2.9} z={-5.8} height={2.2} tilt={0.03} tint="#cdc3af" />
+        <Stele
+          x={STELE_SPOT.x}
+          z={STELE_SPOT.z}
+          height={GREAT_STELE_HEIGHT}
+          carved
+          storeys={10}
+          platform
+        />
+
+        {highlightStele && (
+          <Star
+            x={STELE_SPOT.x}
+            y={PLATFORM_H + GREAT_STELE_HEIGHT + 1.2}
+            z={STELE_SPOT.z}
+            size={0.3}
+          />
+        )}
 
         <Npc />
-        <Player onMove={handleMove} frozen={frozen} onNearChange={onNearChange} />
+        <Player
+          onMove={handleMove}
+          frozen={frozen}
+          onNearChange={onNearChange}
+        />
       </Canvas>
 
       {/* cinematic edge darkening */}
