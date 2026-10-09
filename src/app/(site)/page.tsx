@@ -82,7 +82,7 @@ export default function Index() {
             <p className="font-ethiopic text-lg">ጠይቀኝ</p>
             <h2 className="text-3xl font-bold">Ask UTOPIA</h2>
             <p className="mt-3 max-w-lg">
-              Your companion on the road. Ask "Why is this important?" while you stand in Aksum, and your guide knows exactly what you mean — in English or አማርኛ.
+              Your companion on the road. Ask "Why is this important?" while you stand in Aksum, and your guide knows exactly what you mean, in English or አማርኛ.
             </p>
             <p className="mt-4 text-sm font-semibold tracking-widest">TAP THE MIC AT THE BOTTOM AND ASK ↓</p>
           </div>

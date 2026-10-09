@@ -34,7 +34,7 @@ export default function Mezgeb() {
         </div>
         {p.discoveries.length === 0 && (
           <div className="parchment mb-6 rounded-sm p-5">
-            Your መዝገብ is waiting. Open any discovery and tap <strong>Add to መዝገብ</strong> — <Link href="/explore/aksum" className="underline">start with Aksum</Link>.
+            Your መዝገብ is waiting. Open any discovery and tap <strong>Add to መዝገብ</strong> <Link href="/explore/aksum" className="underline">start with Aksum</Link>.
           </div>
         )}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

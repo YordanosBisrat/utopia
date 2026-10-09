@@ -22,7 +22,7 @@ export function PortalHub() {
   // After the transition plays, move into the journey
   useEffect(() => {
     if (!entering) return;
-    const id = setTimeout(() => router.push(`/game/${entering.id}`), 2400);
+    const id = setTimeout(() => router.push(`/journey/${entering.id}`), 2400);
     return () => clearTimeout(id);
   }, [entering, router]);
 
