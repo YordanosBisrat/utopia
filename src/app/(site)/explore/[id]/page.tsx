@@ -56,7 +56,7 @@ export default function Detail() {
           </div>
           <p className="mt-4 font-ethiopic text-2xl text-gold-soft">{e.amharicTitle}</p>
           <h1 className="text-5xl font-black text-gold-gradient md:text-7xl">{e.title.toUpperCase()}</h1>
-          <p className="mt-3 max-w-2xl text-lg text-ivory/90">{e.description}</p>
+          <p className="mt-3 max-w-2xl text-lg text-foreground/90">{e.description}</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <GoldButton onClick={() => actions.discover(e.id)} disabled={discovered}>
               {discovered ? "IN YOUR መዝገብ ✓" : "ADD TO መዝገብ"}
