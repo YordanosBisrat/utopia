@@ -1,28 +1,18 @@
 import type { Metadata } from "next";
-import { Cinzel, Outfit, Noto_Serif_Ethiopic } from "next/font/google";
+import { Cinzel, Figtree, Noto_Serif_Ethiopic, Noto_Sans_Ethiopic } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { Assistant } from "@/components/Assistant";
 
-const cinzel = Cinzel({
-  subsets: ["latin"],
-  variable: "--font-cinzel",
-  display: "swap",
-});
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-  display: "swap",
-});
-const notoEthiopic = Noto_Serif_Ethiopic({
-  subsets: ["ethiopic"],
-  variable: "--font-noto-ethiopic",
-  display: "swap",
-});
+const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel", display: "swap" });
+const figtree = Figtree({ subsets: ["latin"], variable: "--font-figtree", display: "swap" });
+const notoEthiopic = Noto_Serif_Ethiopic({ subsets: ["ethiopic"], variable: "--font-noto-ethiopic", display: "swap" });
+const notoSansEthiopic = Noto_Sans_Ethiopic({ subsets: ["ethiopic"], variable: "--font-noto-sans-ethiopic", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "UTOPIA | you-ጦቢያ",
+  title: { default: "UTOPIA | you-ጦቢያ: Where Ethiopia Comes Alive", template: "%s" },
   description:
-    "Where Ethiopia Comes Alive. An interactive Ethiopian knowledge universe.",
+    "Explore the people, places, stories, cultures and wonders of Ethiopia through discovery, games and journeys.",
   icons: {
     icon: [
       { url: "/favicon.ico?v=2", sizes: "any" },
@@ -32,18 +22,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${cinzel.variable} ${outfit.variable} ${notoEthiopic.variable}`}
+      className={`${cinzel.variable} ${figtree.variable} ${notoEthiopic.variable} ${notoSansEthiopic.variable}`}
       suppressHydrationWarning
     >
       <body>
         {children}
         <Assistant />
+        <Toaster position="top-center" theme="dark" />
       </body>
     </html>
   );

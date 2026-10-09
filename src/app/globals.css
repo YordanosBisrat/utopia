@@ -1,59 +1,104 @@
 @import "tailwindcss";
 
-:root {
-  --radius: 0.5rem;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
+/* UTOPIA design system: emerald, gold, parchment. Merged with the game HUD utilities. */
+
+@theme inline {
+  --font-display: var(--font-cinzel), "Noto Serif Ethiopic", serif;
+  --font-ethiopic: var(--font-noto-ethiopic), serif;
+  --font-geez: var(--font-noto-ethiopic), serif;
+  --font-sans: var(--font-figtree), var(--font-noto-sans-ethiopic), sans-serif;
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 4px);
-
-  --background: oklch(0.17 0.022 60);
-  --foreground: oklch(0.94 0.02 85);
-  --card: oklch(0.22 0.025 62);
-  --primary: oklch(0.78 0.14 78);
-  --primary-foreground: oklch(0.18 0.03 60);
-  --secondary: oklch(0.3 0.03 65);
-  --muted: oklch(0.27 0.022 65);
-  --muted-foreground: oklch(0.73 0.03 80);
-  --accent: oklch(0.55 0.11 45);
-  --destructive: oklch(0.52 0.16 28);
-  --border: oklch(0.42 0.05 72 / 45%);
-  --ring: oklch(0.78 0.14 78);
-
+  --radius-2xl: calc(var(--radius) + 8px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
+  --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --ember: oklch(0.72 0.16 55);
-  --gold: oklch(0.82 0.14 82);
-  --sand: oklch(0.72 0.06 78);
-  --parchment: oklch(0.92 0.045 85);
-  --highland: oklch(0.42 0.07 245);
-  --moss: oklch(0.45 0.07 145);
-  --clay: oklch(0.48 0.12 38);
-  --ink: oklch(0.2 0.03 60);
-
-  --color-ember: var(--ember);
   --color-gold: var(--gold);
-  --color-sand: var(--sand);
+  --color-gold-soft: var(--gold-soft);
+  --color-gold-deep: var(--gold-deep);
+  --color-emerald: var(--emerald);
+  --color-emerald-glow: var(--emerald-glow);
+  --color-emerald-deep: var(--emerald-deep);
   --color-parchment: var(--parchment);
+  --color-parchment-foreground: var(--parchment-foreground);
+  --color-ivory: var(--ivory);
+  --color-success: var(--success);
+
+  /* game HUD colors */
+  --color-ink: var(--ink);
+  --color-sand: var(--sand);
+  --color-clay: var(--clay);
+  --color-ember: var(--ember);
   --color-highland: var(--highland);
   --color-moss: var(--moss);
-  --color-clay: var(--clay);
-  --color-ink: var(--ink);
+}
 
-  --font-display: var(--font-cinzel), Georgia, serif;
-  --font-sans: var(--font-outfit), system-ui, sans-serif;
-  --font-geez: var(--font-noto-ethiopic), serif;
+:root {
+  --radius: 0.25rem;
+  --background: oklch(0.16 0.025 165);
+  --foreground: oklch(0.95 0.025 90);
+  --card: oklch(0.2 0.035 165);
+  --card-foreground: oklch(0.95 0.025 90);
+  --popover: oklch(0.19 0.03 165);
+  --popover-foreground: oklch(0.95 0.025 90);
+  --primary: oklch(0.8 0.14 85);
+  --primary-foreground: oklch(0.18 0.03 165);
+  --secondary: oklch(0.27 0.05 165);
+  --secondary-foreground: oklch(0.95 0.025 90);
+  --muted: oklch(0.24 0.035 165);
+  --muted-foreground: oklch(0.75 0.03 110);
+  --accent: oklch(0.32 0.07 160);
+  --accent-foreground: oklch(0.95 0.025 90);
+  --destructive: oklch(0.6 0.2 28);
+  --destructive-foreground: oklch(0.97 0.01 90);
+  --border: oklch(0.45 0.09 160 / 55%);
+  --input: oklch(0.45 0.09 160 / 60%);
+  --ring: oklch(0.8 0.14 85);
+
+  --gold: oklch(0.8 0.14 85);
+  --gold-soft: oklch(0.88 0.1 90);
+  --gold-deep: oklch(0.62 0.13 70);
+  --emerald: oklch(0.55 0.13 160);
+  --emerald-glow: oklch(0.72 0.16 158);
+  --emerald-deep: oklch(0.22 0.05 165);
+  --parchment: oklch(0.93 0.035 85);
+  --parchment-foreground: oklch(0.25 0.04 60);
+  --ivory: oklch(0.97 0.015 90);
+  --success: oklch(0.72 0.16 158);
+
+  /* game HUD colors */
+  --ink: oklch(0.13 0.025 165);
+  --sand: oklch(0.78 0.05 85);
+  --clay: oklch(0.48 0.12 38);
+  --ember: oklch(0.72 0.16 55);
+  --highland: oklch(0.42 0.07 245);
+  --moss: oklch(0.45 0.07 145);
+
+  --gradient-gold: linear-gradient(135deg, var(--gold-soft), var(--gold) 45%, var(--gold-deep));
+  --gradient-night: linear-gradient(180deg, oklch(0.16 0.025 165 / 0%), oklch(0.16 0.025 165) 85%);
+  --gradient-panel: linear-gradient(160deg, oklch(0.3 0.07 160 / 35%), oklch(0.16 0.03 165 / 55%));
+  --shadow-emerald: 0 0 0 1px oklch(0.55 0.13 160 / 50%), 0 0 28px -6px oklch(0.72 0.16 158 / 45%);
+  --shadow-gold: 0 0 0 1px oklch(0.8 0.14 85 / 60%), 0 0 30px -8px oklch(0.8 0.14 85 / 55%);
 
   --gradient-portal: radial-gradient(
     circle at center,
@@ -80,32 +125,111 @@
   * {
     border-color: var(--color-border);
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-outfit), system-ui, sans-serif;
-    overflow: hidden;
+    font-family: var(--font-sans);
+    background-image:
+      radial-gradient(ellipse at 20% -10%, oklch(0.35 0.08 160 / 35%), transparent 55%),
+      radial-gradient(ellipse at 90% 10%, oklch(0.5 0.1 85 / 10%), transparent 45%);
+    background-attachment: fixed;
   }
   h1,
   h2,
-  h3 {
-    font-family: var(--font-display), Georgia, serif;
-    letter-spacing: 0.06em;
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: 0.04em;
   }
 }
 
-.hud-panel {
+/* ---------- Site utilities ---------- */
+@utility text-gold-gradient {
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility panel {
+  background: var(--gradient-panel);
+  border: 1px solid oklch(0.55 0.13 160 / 45%);
+  box-shadow: inset 0 1px 0 oklch(0.8 0.14 85 / 8%);
+  backdrop-filter: blur(6px);
+}
+
+@utility panel-glow {
+  box-shadow: var(--shadow-emerald);
+}
+
+@utility parchment {
+  background-color: var(--parchment);
+  color: var(--parchment-foreground);
+  background-image:
+    radial-gradient(ellipse at 30% 20%, oklch(1 0 0 / 40%), transparent 60%),
+    radial-gradient(ellipse at 80% 90%, oklch(0.7 0.07 70 / 25%), transparent 60%);
+}
+
+@utility corners {
+  position: relative;
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: var(--gold);
+    pointer-events: none;
+    transition: all 0.4s ease;
+  }
+  &::before {
+    top: -1px;
+    left: -1px;
+    border-top: 2px solid;
+    border-left: 2px solid;
+  }
+  &::after {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+  }
+}
+
+@utility tibeb {
+  height: 10px;
+  background-image:
+    linear-gradient(45deg, var(--gold) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--gold) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--emerald) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--emerald) 75%);
+  background-size: 10px 10px;
+  background-position: 0 0, 0 5px, 5px -5px, -5px 0;
+  opacity: 0.55;
+}
+
+@utility pattern-geez {
+  background-image:
+    radial-gradient(circle at 1px 1px, oklch(0.8 0.14 85 / 12%) 1px, transparent 0),
+    linear-gradient(45deg, transparent 48%, oklch(0.55 0.13 160 / 10%) 49%, oklch(0.55 0.13 160 / 10%) 51%, transparent 52%);
+  background-size: 22px 22px, 44px 44px;
+}
+
+/* ---------- Game HUD utilities ---------- */
+@utility hud-panel {
   background: color-mix(in oklab, var(--ink) 72%, transparent);
   backdrop-filter: blur(10px);
   border: 1px solid color-mix(in oklab, var(--gold) 28%, transparent);
   box-shadow: var(--shadow-panel);
 }
 
-.relic-frame {
+@utility relic-frame {
   position: relative;
   border: 1px solid color-mix(in oklab, var(--gold) 40%, transparent);
   background: color-mix(in oklab, var(--ink) 78%, transparent);
-
   &::before {
     content: "";
     position: absolute;
@@ -115,69 +239,60 @@
   }
 }
 
-.parchment-surface {
+@utility parchment-surface {
   background-color: var(--parchment);
   color: var(--ink);
   box-shadow: var(--shadow-panel);
 }
 
-.glow-text {
+@utility glow-text {
   text-shadow:
     0 0 24px color-mix(in oklab, var(--gold) 45%, transparent),
     0 4px 18px oklch(0 0 0 / 70%);
 }
 
-.vignette {
+@utility vignette {
   background: var(--gradient-vignette);
 }
 
-.scrim {
+@utility scrim {
   background: var(--gradient-scrim);
 }
 
-.portal-glow {
+@utility portal-glow {
   background: var(--gradient-portal);
 }
 
+/* ---------- Animations ---------- */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 oklch(0.8 0.14 85 / 55%); }
+  100% { box-shadow: 0 0 0 22px oklch(0.8 0.14 85 / 0%); }
+}
 @keyframes drift-slow {
   0% { transform: translate3d(0, 0, 0) scale(1.08); }
   50% { transform: translate3d(-2.2%, -1.2%, 0) scale(1.14); }
   100% { transform: translate3d(0, 0, 0) scale(1.08); }
 }
-
 @keyframes cloud-pan {
   from { transform: translateX(-10%); }
   to { transform: translateX(110%); }
 }
-
 @keyframes ember-rise {
   0% { transform: translateY(0) translateX(0); opacity: 0; }
   10% { opacity: 0.9; }
   100% { transform: translateY(-110vh) translateX(var(--sway, 20px)); opacity: 0; }
 }
-
-@keyframes pulse-ring {
-  0% { transform: scale(0.85); opacity: 0.85; }
-  100% { transform: scale(1.75); opacity: 0; }
-}
-
 @keyframes shimmer {
   0%, 100% { opacity: 0.55; }
   50% { opacity: 1; }
 }
 
-.animate-kenburns {
-  animation: drift-slow 38s ease-in-out infinite;
-}
-
-.animate-ember {
-  animation: ember-rise linear infinite;
-}
-
-.animate-pulse-ring {
-  animation: pulse-ring 3.2s ease-out infinite;
-}
-
-.animate-shimmer {
-  animation: shimmer 3.4s ease-in-out infinite;
-}
+@utility animate-float { animation: float-slow 6s ease-in-out infinite; }
+@utility animate-pulse-ring { animation: pulse-ring 1.4s ease-out infinite; }
+@utility animate-kenburns { animation: drift-slow 38s ease-in-out infinite; }
+@utility animate-ember { animation: ember-rise linear infinite; }
+@utility animate-shimmer { animation: shimmer 3.4s ease-in-out infinite; }
