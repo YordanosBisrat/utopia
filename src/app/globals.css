@@ -53,7 +53,9 @@
   --color-moss: var(--moss);
 }
 
-:root {
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
   --radius: 0.25rem;
   --background: oklch(0.16 0.025 165);
   --foreground: oklch(0.95 0.025 90);
@@ -119,6 +121,53 @@
   );
   --shadow-relic: 0 0 60px color-mix(in oklab, var(--gold) 35%, transparent);
   --shadow-panel: 0 24px 60px -18px oklch(0 0 0 / 65%);
+}
+
+/* ---------- Light theme (ivory paper, deep green text, deep gold accents) ---------- */
+[data-theme="light"] {
+  color-scheme: light;
+  --background: oklch(0.975 0.012 95);
+  --foreground: oklch(0.22 0.04 165);
+  --card: oklch(0.995 0.006 95);
+  --card-foreground: oklch(0.22 0.04 165);
+  --popover: oklch(0.99 0.008 95);
+  --popover-foreground: oklch(0.22 0.04 165);
+  --primary: oklch(0.5 0.12 75);
+  --primary-foreground: oklch(0.985 0.01 95);
+  --secondary: oklch(0.93 0.02 130);
+  --secondary-foreground: oklch(0.22 0.04 165);
+  --muted: oklch(0.94 0.02 130);
+  --muted-foreground: oklch(0.42 0.04 150);
+  --accent: oklch(0.92 0.04 150);
+  --accent-foreground: oklch(0.22 0.04 165);
+  --destructive: oklch(0.55 0.2 28);
+  --destructive-foreground: oklch(0.3 0.12 28);
+  --border: oklch(0.55 0.06 160 / 40%);
+  --input: oklch(0.55 0.06 160 / 45%);
+  --ring: oklch(0.5 0.12 75);
+
+  --gold: oklch(0.5 0.12 75);
+  --gold-soft: oklch(0.44 0.1 75);
+  --gold-deep: oklch(0.4 0.1 70);
+  --emerald: oklch(0.45 0.12 160);
+  --emerald-glow: oklch(0.42 0.11 160);
+  --emerald-deep: oklch(0.9 0.04 150);
+  --parchment: oklch(0.93 0.04 85);
+  --parchment-foreground: oklch(0.25 0.04 60);
+  --ivory: oklch(0.2 0.03 165);
+  --success: oklch(0.5 0.14 155);
+
+  --gradient-gold: linear-gradient(135deg, oklch(0.56 0.12 80), var(--gold) 45%, var(--gold-deep));
+  --gradient-night: linear-gradient(180deg, oklch(0.975 0.012 95 / 0%), oklch(0.975 0.012 95) 85%);
+  --gradient-panel: linear-gradient(160deg, oklch(0.99 0.02 150 / 80%), oklch(0.96 0.02 100 / 85%));
+  --shadow-emerald: 0 0 0 1px oklch(0.45 0.12 160 / 40%), 0 8px 28px -10px oklch(0.45 0.12 160 / 35%);
+  --shadow-gold: 0 0 0 1px oklch(0.5 0.12 75 / 50%), 0 8px 28px -10px oklch(0.5 0.12 75 / 40%);
+}
+
+[data-theme="light"] body {
+  background-image:
+    radial-gradient(ellipse at 20% -10%, oklch(0.9 0.06 150 / 45%), transparent 55%),
+    radial-gradient(ellipse at 90% 10%, oklch(0.9 0.08 85 / 35%), transparent 45%);
 }
 
 @layer base {

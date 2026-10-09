@@ -27,8 +27,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html
       lang="en"
       className={`${cinzel.variable} ${figtree.variable} ${notoEthiopic.variable} ${notoSansEthiopic.variable}`}
+      data-theme="dark"
       suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{var t=localStorage.getItem("utopia.theme");document.documentElement.dataset.theme=t==="light"?"light":"dark"}catch(e){}',
+          }}
+        />
+      </head>
       <body>
         {children}
         <Assistant />
