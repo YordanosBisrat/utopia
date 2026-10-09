@@ -445,14 +445,16 @@ export interface Challenge {
   hints: string[];
   xp: number;
   explorationId: string;
+  prompt?: string; // one friendly line shown under the question
 }
 
 export const challenges: Challenge[] = [
-  { id: "c1", question: "Which ancient city is famous for its towering granite stelae?", options: ["Harar", "Aksum", "Gondar", "Bahir Dar"], answer: 1, hints: ["It was an empire trading with Rome.", "Its king Ezana adopted Christianity."], xp: 50, explorationId: "aksum" },
-  { id: "c2", question: "In which year did Ethiopia win the Battle of Adwa?", options: ["1868", "1896", "1935", "1941"], answer: 1, hints: ["It was at the end of the 19th century."], xp: 50, explorationId: "adwa" },
-  { id: "c3", question: "What grain is injera made from?", options: ["Wheat", "Sorghum", "Teff", "Barley"], answer: 2, hints: ["It's a tiny, gluten-free grain."], xp: 40, explorationId: "injera" },
-  { id: "c4", question: "How many months are in the Ethiopian calendar?", options: ["12", "13", "14", "10"], answer: 1, hints: ["The last month, Pagume, is very short."], xp: 40, explorationId: "ethiopian-calendar" },
-  { id: "c5", question: "What does Lucy's Amharic name 'Dinkinesh' mean?", options: ["Ancient one", "You are marvellous", "First mother", "Small bones"], answer: 1, hints: ["It's a compliment!"], xp: 50, explorationId: "lucy" },
+  { id: "c1", question: "Which ancient city is famous for its towering carved stelae?", options: ["Harar", "Aksum", "Gondar", "Bahir Dar"], answer: 1, hints: ["It was an empire trading with Rome.", "Its king Ezana adopted Christianity."], xp: 50, prompt: "Tall carved stones still stand in this city.", explorationId: "aksum" },
+  { id: "c2", question: "In which year did Ethiopia win the Battle of Adwa?", options: ["1868", "1896", "1935", "1941"], answer: 1, hints: ["It was at the end of the 19th century."], xp: 50, prompt: "A victory still remembered across Africa.", explorationId: "adwa" },
+  { id: "c3", question: "What grain is injera made from?", options: ["Wheat", "Sorghum", "Teff", "Barley"], answer: 2, hints: ["It's a tiny, gluten-free grain."], xp: 40, prompt: "Ethiopia's everyday flatbread starts with a tiny grain.", explorationId: "injera" },
+  { id: "c4", question: "How many months are in the Ethiopian calendar?", options: ["12", "13", "14", "10"], answer: 1, hints: ["The last month, Pagume, is very short."], xp: 40, prompt: "Ethiopia keeps a calendar all its own.", explorationId: "ethiopian-calendar" },
+  { id: "c5", question: "What does Lucy's Amharic name 'Dinkinesh' mean?", options: ["Ancient one", "You are marvellous", "First mother", "Small bones"], answer: 1, hints: ["It's a compliment!"], xp: 50, prompt: "A famous fossil has two names.", explorationId: "lucy" },
+  { id: "c6", question: "Which Ethiopian place is home to eleven rock-hewn churches?", options: ["Aksum", "Lalibela", "Gondar", "Harar"], answer: 1, hints: ["The churches were carved downward into solid rock.", "The town is named after the king who ordered them built."], xp: 50, prompt: "Look closely. The answer is written in stone.", explorationId: "lalibela" },
 ];
 
 export function todaysChallengeIndex(date = new Date()) {
