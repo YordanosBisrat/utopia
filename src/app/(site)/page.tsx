@@ -19,7 +19,7 @@ export default function Index() {
 
   return (
     <>
-      <section className="relative flex min-h-[100svh] items-end overflow-hidden">
+      <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden">
         <Image
           src={images.heroImg}
           alt="A young explorer overlooking the Ethiopian highlands and the stelae of Aksum"
@@ -29,17 +29,17 @@ export default function Index() {
           style={{ transform: `translateY(${y * 0.25}px)` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
-        <div className="relative mx-auto w-full max-w-7xl px-5 pb-20 md:pb-28">
+        <div className="absolute inset-0 bg-background/40" />
+        <div className="relative mx-auto flex w-full max-w-5xl flex-col items-center px-5 py-24 text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/logo-mark.png" alt="UTOPIA you-ጦቢያ" className="mb-6 h-28 w-28 rounded-3xl animate-float md:h-36 md:w-36" />
+          <img src="/brand/logo-mark.png" alt="UTOPIA you-ጦቢያ" className="mb-8 h-44 w-44 rounded-3xl animate-float md:h-60 md:w-60" />
           <h1 className="text-5xl leading-[0.95] font-black text-gold-gradient md:text-4xl lg:text-5xl">
             An Ethiopian knowledge universe
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-foreground/90">
+          <p className="mt-6 max-w-xl text-lg text-foreground/90 md:text-xl">
             Explore the people, places, stories, cultures and wonders of Ethiopia through discovery, games and journeys.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/explore" className={goldLinkClass}>START EXPLORING</Link>
             <Link href="/portal" className={ghostLinkClass}>ENTER THE TIME PORTAL</Link>
           </div>
