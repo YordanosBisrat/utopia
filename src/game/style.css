@@ -1,0 +1,608 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #05080c;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+#webgl-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 1;
+}
+
+/* Atmospheric Lens Vignette */
+#vignette-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 5;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(4, 8, 14, 0.65) 85%,
+    rgba(2, 4, 7, 0.95) 100%
+  );
+}
+
+#hud-controls {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  display: flex;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  padding: 8px 16px;
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+  color: #94a3b8;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+#hud-controls span {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+/* Stealth Detection HUD */
+#stealth-meter-container {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(10, 15, 24, 0.85);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 8px 18px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  z-index: 15;
+  transition: opacity 0.2s ease;
+}
+
+#stealth-meter-container.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#stealth-eye-icon {
+  font-size: 16px;
+  color: #ef4444;
+  animation: pulse-eye 0.8s infinite alternate;
+}
+
+@keyframes pulse-eye {
+  from { transform: scale(0.9); opacity: 0.6; }
+  to { transform: scale(1.15); opacity: 1; }
+}
+
+#stealth-bar-frame {
+  width: 140px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+#stealth-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+  transition: width 0.05s linear;
+}
+
+#detection-flash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(239, 68, 68, 0) 30%, rgba(239, 68, 68, 0.7) 100%);
+  opacity: 0;
+  z-index: 25;
+  transition: opacity 0.25s ease;
+}
+
+#detection-flash.active {
+  opacity: 1;
+}
+
+/* Interactive World Prompt */
+#interaction-prompt {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 8px 16px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  color: #f8fafc;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 15;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#interaction-prompt.hidden {
+  opacity: 0;
+  transform: translate(-50%, -40%);
+}
+
+.prompt-key {
+  width: 24px;
+  height: 24px;
+  background: #38bdf8;
+  color: #0f172a;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+#prompt-progress-bar {
+  width: 50px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-left: 4px;
+}
+
+#prompt-progress-fill {
+  width: 0%;
+  height: 100%;
+  background: #38bdf8;
+  transition: width 0.05s linear;
+}
+
+/* -------------------------------------------------------------
+   WHITE RECTANGULAR DIALOGUE MODAL (Figma Spec: 620 x 160)
+------------------------------------------------------------- */
+#dialogue-container {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 620px;
+  max-width: 90vw;
+  min-height: 160px;
+  max-height: 260px;
+  background: #ffffff;
+  border: 2px solid #0f172a;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  padding: 20px 24px;
+  gap: 18px;
+  z-index: 100;
+  box-sizing: border-box;
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#dialogue-container.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 15px);
+}
+
+#dialogue-avatar-box {
+  width: 68px;
+  height: 68px;
+  background: #0f172a;
+  border: 2px solid #0284c7;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+#dialogue-avatar {
+  width: 100%;
+  height: 100%;
+  background: #1e293b;
+}
+
+#dialogue-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+#dialogue-speaker {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+
+#dialogue-body {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #334155;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-y: auto;
+  max-height: 100px;
+  margin-bottom: 8px;
+}
+
+#dialogue-choices {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.choice-btn {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #1e293b;
+  text-align: left;
+  cursor: pointer;
+  white-space: normal;
+  word-break: break-word;
+  transition: all 0.15s ease;
+}
+
+.choice-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  font-weight: 600;
+}
+
+#dialogue-prompt {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  align-self: flex-end;
+  margin-top: auto;
+  padding-top: 4px;
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* -------------------------------------------------------------
+   START OF GAME INSTRUCTION MODAL
+------------------------------------------------------------- */
+#instructions-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(3, 7, 12, 0.9);
+  backdrop-filter: blur(12px);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+#instructions-backdrop.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#instructions-modal {
+  width: 660px;
+  max-width: 92vw;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(226, 232, 240, 0.8);
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.instructions-badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #0284c7;
+  background: #e0f2fe;
+  padding: 4px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+#instructions-header h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.instructions-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+#instructions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.instruction-card {
+  display: flex;
+  gap: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 14px 16px;
+  border-radius: 10px;
+  align-items: flex-start;
+}
+
+.danger-card {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.instruction-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.instruction-text h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.instruction-text p {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #475569;
+}
+
+.danger-card .instruction-text h4 {
+  color: #b45309;
+}
+
+#instructions-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+#start-game-btn {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+#start-game-btn:hover {
+  background: #0369a1;
+}
+
+.key-hint {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------
+   HISTORICAL CODEX MODAL & COMPLETION OVERLAY
+------------------------------------------------------------- */
+#codex-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(3, 6, 10, 0.88);
+  backdrop-filter: blur(12px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+
+#codex-backdrop.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#codex-modal {
+  width: 780px;
+  max-width: 90vw;
+  height: 480px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(226, 232, 240, 0.8);
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  overflow: hidden;
+  transform: translateY(0);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#codex-backdrop.hidden #codex-modal {
+  transform: translateY(20px);
+}
+
+/* Left Column */
+#codex-visual-col {
+  background: #0f172a;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid #1e293b;
+}
+
+#codex-image-frame {
+  width: 100%;
+  height: 280px;
+  background: #1e293b;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+#codex-image {
+  width: 100%;
+  height: 100%;
+  background: url('https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcR4ql7tC1o8sWuC_vlYNxWO6mDEaUh6mUF_xYDVsmimZdEHpoEpAirRKloqPuHOP99_R-vugYz7w86wSQs') center/cover no-repeat;
+}
+
+#codex-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.meta-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.meta-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+/* Right Column */
+#codex-text-col {
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+}
+
+#codex-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #0284c7;
+  background: #e0f2fe;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+#codex-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+#codex-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+#codex-body {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+#codex-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 18px;
+  border-top: 1px solid #e2e8f0;
+}
+
+#codex-close-btn {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+#codex-close-btn:hover {
+  background: #0369a1;
+}
+
+#codex-esc-hint {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+}

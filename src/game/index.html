@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Echoes of Eternity — Battle of Adwa</title>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <!-- 3D WebGL Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Little Nightmares Atmospheric Lens Vignette -->
+    <div id="vignette-overlay"></div>
+
+    <!-- HUD Controls Hint -->
+    <div id="hud-controls">
+      <span>[A / D] Move</span>
+      <span>[W / S] Depth</span>
+      <span>[C] Crouch / Sneak</span>
+      <span>[Shift] Sprint</span>
+      <span>[E] Interact / Talk</span>
+    </div>
+
+    <!-- Stealth Detection Eye & Meter -->
+    <div id="stealth-meter-container" class="hidden">
+      <div id="stealth-eye-icon">◉</div>
+      <div id="stealth-bar-frame">
+        <div id="stealth-bar-fill"></div>
+      </div>
+    </div>
+
+    <!-- Screen Flash on Sentry Capture -->
+    <div id="detection-flash"></div>
+
+    <!-- Interactive World Prompt ([Hold E] Turn Winch / Inspect) -->
+    <div id="interaction-prompt" class="hidden">
+      <div class="prompt-key">E</div>
+      <div id="prompt-label">Turn Winch</div>
+      <div id="prompt-progress-bar">
+        <div id="prompt-progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- White Rectangular Dialogue Overlay (580x160px, 12px radius) -->
+    <div id="dialogue-container" class="hidden">
+      <div id="dialogue-avatar-box">
+        <div id="dialogue-avatar"></div>
+      </div>
+      <div id="dialogue-content">
+        <div id="dialogue-speaker">Ras Alula</div>
+        <div id="dialogue-body"></div>
+        <div id="dialogue-choices" class="hidden"></div>
+        <div id="dialogue-prompt">Press [E] to continue ►</div>
+      </div>
+    </div>
+
+    <!-- Start of Game Instruction / Briefing Modal -->
+    <div id="instructions-backdrop">
+      <div id="instructions-modal">
+        <div id="instructions-header">
+          <div class="instructions-badge">ACT I : SCOUT RECONNAISSANCE</div>
+          <h2>Kidane Mehret Pass</h2>
+          <p class="instructions-subtitle">March 1, 1896 — The eve of the Battle of Adwa</p>
+        </div>
+
+        <div id="instructions-grid">
+          <div class="instruction-card danger-card">
+            <div class="instruction-icon">🔦</div>
+            <div class="instruction-text">
+              <h4>Avoid the Sentry Searchlight</h4>
+              <p>Italian outposts sweep the ravine with high-powered lanterns. <strong>Do not step into the moving yellow beam</strong> while standing or running, or the alarm will sound!</p>
+            </div>
+          </div>
+
+          <div class="instruction-card">
+            <div class="instruction-icon">🛡️</div>
+            <div class="instruction-text">
+              <h4>Use Sangar Rock Cover</h4>
+              <p>Hold <strong>[C]</strong> to crouch behind low basalt stone walls. As long as you are crouching inside a cover zone, the searchlight will pass harmlessly over you.</p>
+            </div>
+          </div>
+
+          <div class="instruction-card">
+            <div class="instruction-icon">⚙️</div>
+            <div class="instruction-text">
+              <h4>Empress Taytu's Stratagem</h4>
+              <p>Approach the wooden winch stand at the flooded gulch and <strong>Hold [E]</strong> to raise the sluice gate and drain the water, cutting enemy supplies.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="instructions-footer">
+          <button id="start-game-btn">Begin Reconnaissance ➔</button>
+          <span class="key-hint">Press [Space] or [Enter] to Start</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historical Codex / End-Level Completion Modal -->
+    <div id="codex-backdrop" class="hidden">
+      <div id="codex-modal">
+        <!-- Left Column: Archival Visual & Metadata -->
+        <div id="codex-visual-col">
+          <div id="codex-image-frame">
+            <div id="codex-image"></div>
+          </div>
+          <div id="codex-meta">
+            <span class="meta-label">ARCHIVE REFERENCE</span>
+            <span class="meta-value">ETH-MIL-1896-ADWA</span>
+            <span class="meta-label">RECORD DATE</span>
+            <span class="meta-value">1 March 1896 (Yekatit 23, 1888)</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Narrative & Tactical Record -->
+        <div id="codex-text-col">
+          <div id="codex-header">
+            <div id="codex-badge">MISSION COMPLETE</div>
+            <h2 id="codex-title">The Battle of Adwa</h2>
+            <div id="codex-tags">
+              <span class="tag">Tactical Scout</span>
+              <span class="tag">Kidane Mehret Pass</span>
+              <span class="tag">Empress Taytu Stratagem</span>
+            </div>
+          </div>
+
+          <div id="codex-body">
+            <p>
+              By severing the Endeyeyus water supply and confirming that General Albertone's brigade was separated from the main Italian column, your intelligence allowed Ethiopian forces under <strong>Emperor Menelik II</strong> and <strong>Ras Alula</strong> to execute a decisive encirclement.
+            </p>
+            <p>
+              Adwa remains a watershed victory: the decisive defense of sovereignty that halted colonial expansion in the Horn of Africa.
+            </p>
+          </div>
+
+          <div id="codex-footer">
+            <button id="codex-close-btn">Continue to Act II ➔</button>
+            <span id="codex-esc-hint">Press [ESC] to Dismiss</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
